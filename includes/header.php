@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>O'Library</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" >
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -54,7 +54,7 @@
                     </li>
                     </ul>
                         <li class="nav-item register">
-                            <a href="mylibrary-management-system/register.php">Sign Up  <i class="fa fa-sign-in"></i></a>
+                            <a href="register.php">Sign Up  <i class="fa fa-sign-in"></i></a>
                         </li>
                         </ul>
                         <?php endif; ?>
