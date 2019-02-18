@@ -1,49 +1,6 @@
-<?php session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-
-if(isset($_GET['approve_id'])) {
-
-    $approve_id = $_GET['approve_id'];
-    
-    $query = "SELECT * FROM books WHERE id = $approve_id";
-    $result= mysqli_query($conn, $query);
-
-    
-    if($result) {
-        $books = mysqli_fetch_assoc($result);
-        // echo "<pre>", print_r($books), "</pre>"; die();
-        $book_image = $books['image'];
-        $book_title = $books['title'];
-        $book_author = $books['author'];
-        $book_isbn = $books['isbn'];
-        $book_description = mysqli_real_escape_string($conn, $books['description']);
-        $borrowed_date = "";
-        $return_date = "";
-
-       
-        // echo "<pre>", print_r($books['title']), "</pre>";
-        // die();
-        
-        $user_id = $_SESSION['id'];
-        $b_query  = "INSERT INTO borrowed_books 
-                        (user_id, title, image, author, isbn, description, borrow_date, return_date) 
-                    VALUES 
-                        ($user_id,'$book_title','$book_image','$book_author','$book_isbn','$book_description',CURDATE(),CURDATE()+7)";
-        // var_dump($b_query);die();
-        $b_result = mysqli_query($conn, $b_query);
-        
-        if(!$b_result) {
-            die(mysqli_error($conn));
-        } else {
-            header("Location: approve.php");
-            exit();
-        }
-
-    }
-   
-
-}
-?>
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
+<?php include "includes/authentications.php" ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -106,14 +63,14 @@ if(isset($_GET['approve_id'])) {
             <ul class="nav navbar-right top-nav">
                 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -164,15 +121,15 @@ if(isset($_GET['approve_id'])) {
 
                 <!-- Page Heading -->
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" id="user-table">
                         <h1 class="page-header">
                             Welcome To Admin
-                            <small>Subheading</small>
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
 
                         <div class="col-xs-12">
                         
-                        <div id="content">
+                        <div>
                             <table>
                                 <tr>
                                     <th>Image</th>
@@ -200,10 +157,10 @@ if(isset($_GET['approve_id'])) {
                                         LEFT JOIN `users` as u
                                         ON 
                                             bb.user_id=u.id";
-                                $result= mysqli_query($conn, $query);
-                                
+                                $result = mysqli_query($conn, $query);
+
                                 $key = 1;
-                                while($row = mysqli_fetch_array($result)) {
+                                while ($row = mysqli_fetch_array($result)) {
                                     $borrow_id = $row['id'];
                                     $book_image = $row['image'];
                                     $book_title = $row['title'];
@@ -211,7 +168,7 @@ if(isset($_GET['approve_id'])) {
                                     $book_isbn = $row['isbn'];
                                     $apply_date = $row['borrow_date'];
                                     $return_date = $row['return_date'];
-                                ?>
+                                    ?>
                                     <tr>
                                     <td><img src="../images/<?php echo $book_image; ?>" style="height: 60px; border-radius: 50%; width: 50px; text-align: center;"></td>
                                         <td><?php echo $book_title; ?></td>
@@ -220,13 +177,14 @@ if(isset($_GET['approve_id'])) {
                                         <td><?php echo $apply_date; ?></td>
                                         <td><?php echo $return_date; ?></td>
                                     </tr>
-                                <?php } ?>
+                                <?php 
+                            } ?>
                                 
                             </table>
 
                             <h2><a href="user_library.php"><i class="fa fa-book"></i> View Library</a></h2>
                         </div>
-
+                                
                         </div>
                         
                     </div>

@@ -1,25 +1,6 @@
-<?php 
-session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-
-if(isset($_GET['delete_id'])) {
-    $user_id = $_GET['delete_id'];
-    
-    $query = "DELETE FROM users WHERE id=$user_id ";
-    $delete_result = mysqli_query($conn, $query);
-    
-    
-    if(!$delete_result) {
-        die("Nothing!".mysqli_error($conn));
-    } else {   
-        $_SESSION['delete'] = "User Deleted";
-        header("Location: users.php");
-        exit(0);
-    }
-    
-}
-
-?>
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
+<?php include "includes/authentications.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,14 +63,14 @@ if(isset($_GET['delete_id'])) {
             <ul class="nav navbar-right top-nav">
                 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -104,7 +85,7 @@ if(isset($_GET['delete_id'])) {
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class='fa fa-user'></i> Users <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="collapse">
                             <li>
-                                <a href="addUser.php">Add User</a>
+                                <a href="admin-registration/addUser.php">Add User</a>
                             </li>
                             <li>
                                 <a href="users.php">Users Table</a>
@@ -153,8 +134,8 @@ if(isset($_GET['delete_id'])) {
                 <div class="row" id="user-table">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Welcome To Admin
-                            <small>Subheading</small>
+                            Welcome To Users Table
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
 
                         <div class="col-xs-12">

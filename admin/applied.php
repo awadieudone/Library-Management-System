@@ -1,26 +1,6 @@
-<?php
-session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-
-if(isset($_GET['apply_id'])){
-    $apply_id = $_GET['apply_id'];
-    $user_id = $_SESSION['id'];
-
-    $b_query  = "INSERT INTO applied_books (user_id, book_id, apply_date) VALUES ($user_id, $apply_id, CURDATE())";
-    $b_result = mysqli_query($conn, $b_query);
-    
-    if(!$b_result) {
-        die("Database Error: Failed to apply for book. " . mysqli_error($conn));
-    } else {
-        header("Location: ../user_library.php");
-        exit();
-    }
-}
-
-
-
-
-?>
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
+<?php include "includes/authentications.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -83,14 +63,14 @@ if(isset($_GET['apply_id'])){
             <ul class="nav navbar-right top-nav">
                 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -141,10 +121,10 @@ if(isset($_GET['apply_id'])){
 
                 <!-- Page Heading -->
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" id="user-table">
                         <h1 class="page-header">
                             Welcome To Admin
-                            <small>Subheading</small>
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
                         
                         <div class="col-xs-12">
@@ -196,7 +176,7 @@ if(isset($_GET['apply_id'])){
                                         $apply_date = $row['apply_date'];
                                     ?>
                                     <tr>
-                                        <td><?php echo ++$key; ?></td>
+                                        <td><?php echo $key++; ?></td>
                                         <td>
                                             <img src="../images/<?php echo $book_image; ?>"  style="height: 60px; border-radius: 50%; width: 50px; text-align: center;"  >
                                         </td>

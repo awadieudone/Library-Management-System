@@ -1,23 +1,7 @@
 <?php session_start(); ?>
-<?php 
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-
-if(isset($_GET['delete_id'])) {
-    $book_id = $_GET['delete_id'];
-    
-    $query = "DELETE FROM books WHERE id=$book_id ";
-    // var_dump($query);die();
-    $delete_result = mysqli_query($conn, $query);
-    
-    if(!$delete_result) {
-        die("Database Error: Failed to delete book" . mysqli_error($conn));
-    } else {   
-        $_SESSION['del-success'] = "Task Deleted";
-        header("Location: library.php");
-        exit(0);
-    }
-}
-
+<?php include "includes/db.php"; ?>
+<?php include "includes/authentications.php"; ?>
+<?php
     $query = "SELECT * FROM books ";
     $result= mysqli_query($conn, $query);
     $books = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -27,7 +11,6 @@ if(isset($_GET['delete_id'])) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="utf-8">
@@ -86,14 +69,14 @@ if(isset($_GET['delete_id'])) {
             <ul class="nav navbar-right top-nav">
                 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -134,17 +117,7 @@ if(isset($_GET['delete_id'])) {
                         </ul>
                     </li>
 
-                    <!-- <li>
-                        <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Dropdown <i class="fa fa-fw fa-caret-down"></i></a>
-                        <ul id="demo" class="collapse">
-                            <li>
-                                <a href="#">Dropdown Item</a>
-                            </li>
-                            <li>
-                                <a href="#">Dropdown Item</a>
-                            </li>
-                        </ul>
-                    </li> -->
+                    
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -158,8 +131,8 @@ if(isset($_GET['delete_id'])) {
                 <div class="row" id="user-table">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Manage Books
-                            <small>Subheading</small>
+                            Manage Books' Admin
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
                         
                         <div class="col-xs-12">
@@ -191,7 +164,6 @@ if(isset($_GET['delete_id'])) {
                                 <th>Book isbn</th>
                                 <th>Book Description</th>
                                 <th>Created at</th>
-                                <th>Updated at</th>
                                 <th>Action</th>
                             </tr>
 
@@ -210,7 +182,6 @@ if(isset($_GET['delete_id'])) {
                                     ?>
                                     </td>
                                     <td><?php echo $book['created_at']; ?></td>
-                                    <td><?php echo $book['updated_at'] ?></td>
                                     <td>
                                         <a name="edit" class="btn btn-primary" href="edit.php?edit_id=<?php echo $book['id']; ?>">Edit         </a>
                                         <a class="btn btn-danger" name="delete" href='library.php?delete_id=<?php  echo $book['id']; ?>'>X</a>

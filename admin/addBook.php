@@ -1,60 +1,14 @@
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
 <?php
-session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
 $errors = array();
 $image_temp = "";
 $title = "";
 $description = "";
 $author = "";
 $isbn = "";
-
-if($conn && isset($_POST['submit'])) {
-    $image = $_FILES['image']['name'];
-    $image_temp = $_FILES['image']['tmp_name'];
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $author = mysqli_real_escape_string($conn, $_POST['author']);
-    $isbn = mysqli_real_escape_string($conn, $_POST['isbn']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    echo $created_at = date('l jS \of F Y h:i:s A');
-    move_uploaded_file($image_temp, "../images/$image");
-
-    if(empty($title)) {array_push($errors, "Title is required."); }
-    if(empty($author)) {array_push($errors, "Author is required."); }
-    if(empty($isbn)) {array_push($errors, "Book ISBN is required"); }
-    if(empty($description)) {array_push($errors, "A Description is required"); }
-
-    $book_check_query = "SELECT * FROM books WHERE title='$title' OR isbn='$isbn' LIMIT 1";
-    $check_result = mysqli_query($conn,$book_check_query);
-    $book = mysqli_fetch_assoc($check_result);
-
-    if ($book) { // if book exists
-        if ($book['title'] === $title && $book['isbn'] == $isbn) {
-        array_push($errors, "Book already exists");
-        }
-    }
-
-    if(count($errors) == 0) {
-        $query = "INSERT INTO books(image,title, author, isbn, description, created_at, updated_at) 
-                VALUE ('$image','$title','$author','$isbn','$description','$created_at',CURDATE())";
-        $result = mysqli_query($conn,$query);
-        
-
-        $book_id = $conn->insert_id;
-        if($result) {
-            $_SESSION['image'] = $image;
-            $_SESSION['book_id'] = $book_id;
-            header("Location: library.php");
-        } else {
-            die("Failed".mysqli_error($conn));
-        }
-
-    }
-    
-    
-    
-}
-
 ?>
+<?php include "includes/authentications.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -111,20 +65,20 @@ if($conn && isset($_POST['submit'])) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.php">Home Site</a>
+                <a class="navbar-brand" href="index.php">Home Site</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+            <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -188,7 +142,7 @@ if($conn && isset($_POST['submit'])) {
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Welcome To Admin
-                            <small>Subheading</small>
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
 
                         <div class="col-xs-12">

@@ -1,53 +1,13 @@
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
 <?php
-session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-
-
     $book_id = 0;
     $book = ""; 
     $author = "";
     $isbn = "";
     $description = "";
-
-    if(isset($_GET['edit_id'])){
-        $book_id = $_GET['edit_id'];
-
-        $query = "SELECT * FROM books WHERE id=$book_id";
-        $select_book_result = mysqli_query($conn, $query);
-
-        while($row = mysqli_fetch_array($select_book_result)){
-            $book_id = $row['id'];
-            $image = $row['image'];
-            $book = $row['title'];
-            $author = $row['author'];
-            $isbn = $row['isbn'];
-            $description = $row['description'];
-        }
-
-        $_SESSION['book_id'] = $book_id;
-    }
-
-    if(isset($_POST['update-book'])) {
-        $image = $_POST['image'];
-        $book = $_POST['title'];
-        $author = $_POST['author'];
-        $isbn = $_POST['isbn'];
-        $description = $_POST['description'];
-        
-        $query = "UPDATE books SET image='$image', title=' $book', author='$author', isbn='$isbn', description='$description' 
-                    WHERE id=".$_SESSION['book_id'];
-        // var_dump($query);die();
-        // die();
-        $result = mysqli_query($conn, $query);
-
-        if($result) {
-            // $_SESSION['book_id'] = $book_id;
-            $_SESSION['edit-success'] = "book edited.";
-        }
-        header("Location: library.php");
-    }
-
 ?>
+<?php include "includes/authentications.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -110,14 +70,14 @@ $conn = mysqli_connect("localhost", "root", "", "myLibrary");
             <ul class="nav navbar-right top-nav">
                 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -180,8 +140,8 @@ $conn = mysqli_connect("localhost", "root", "", "myLibrary");
                 <div class="row edit"  id="container">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Welcome To Admin
-                            <small>Subheading</small>
+                            Welcome To Edit Book Admin
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
 
                         <div class="col-xs-12">

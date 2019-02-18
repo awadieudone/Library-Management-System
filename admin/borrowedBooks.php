@@ -1,59 +1,6 @@
-<?php
-session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-
-if(isset($_GET['approve_id'])){
-    $approve_id = $_GET['approve_id'];
-
-    $query = "SELECT * FROM books WHERE id = $approve_id";
-    $result= mysqli_query($conn, $query);
-
-    if($result) {
-        $books = mysqli_fetch_assoc($result);
-        $book_image = $books['image'];
-        $book_title = $books['title'];
-        $book_author = $books['author'];
-        $book_isbn = $books['isbn'];
-        $book_description = $books['description'];
-        $approve_date = $_SESSION['apply_date'];
-
-        $b_query  = "INSERT INTO borrowed_books 
-            (image,title,author,isbn,description,borrow_date,return_date) 
-                    VALUES
-            ('$book_image','$book_title','$book_author','$book_isbn','$book_description',$approve_date,$approve_date+7)";
-        // var_dump($b_query);die();
-        $b_result = mysqli_query($conn,$b_query);
-        
-        if(!$b_result) {
-            die(mysqli_error($conn));
-        } else {
-            header("Location: borrowedBooks.php");
-            exit();
-        }
-
-    }
-   
-}
-    
-if(isset($_GET['return_id'])) {
-    echo $book_id = $_GET['return_id'];
-    
-    $query = "DELETE FROM borrowed_books WHERE id=$book_id ";
-    $delete_result = mysqli_query($conn, $query);
-    
-    
-    if(!$delete_result) {
-        die("Nothing!".mysqli_error($conn));
-    } else {   
-        $_SESSION['delete'] = "Task Deleted";
-        header("Location: borrow.php");
-        exit(0);
-    }
-    
-}
-
-
-
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
+<?php include "includes/authentications.php" ?>
 
 ?>
 
@@ -119,14 +66,14 @@ if(isset($_GET['return_id'])) {
             <ul class="nav navbar-right top-nav">
                 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -190,7 +137,7 @@ if(isset($_GET['return_id'])) {
                     <div class="col-lg-12" id="user-table">
                         <h1 class="page-header">
                             Welcome To Admin
-                            <small>Subheading</small>
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
 
                         <div class="col-xs-12">
@@ -230,7 +177,12 @@ if(isset($_GET['return_id'])) {
                                         <td><?php echo $book_title; ?></td>
                                         <td><?php echo $book_author; ?></td>
                                         <td><?php echo $book_isbn; ?></td>
-                                        <td style="width: 250px; height: 60px;"><?php echo $book_description; ?></td>
+                                        <td style="width: 200px; max-height: 100px"><?php
+                                            $strcut = substr($book_description, 0, 150);
+                                            @$book_description = substr($strcut, 0, strrpos($strcut, ' ').'...');
+                                            echo $book_description; 
+                                            ?>
+                                        </td>
                                         <td><?php echo $borrowed_date; ?></td>
                                         <td><?php echo $return_date; ?></td>
 

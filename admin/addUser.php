@@ -1,9 +1,6 @@
+<?php session_start(); ?>
+<?php include "includes/db.php"; ?>
 <?php
-session_start();
-$conn = mysqli_connect("localhost", "root", "", "myLibrary");
-if(!$conn) {
-    die("Connection Failed".mysqli_error($conn));
-}
 $firstname = "";
 $lastname = "";
 $username = "";
@@ -11,62 +8,13 @@ $role = "";
 $email = "";
 
 // $_SESSION['id'] ='';
-
- $errors = array();
-if(isset($_POST['submit-reg'])) {
-    $firstname = $_POST['firstname'];
-    $lastname = $_POST['lastname'];
-    $username = $_POST['username'];
-    $role = $_POST['role'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $passwordConf = $_POST['passwordConf'];
-
-    $errors = array();
-
-    if (empty($username)) { array_push($errors, "Username is required"); }
-    if (empty($email)) { array_push($errors, "Email is required"); }
-    // if (empty($role)) { array_push($errors, "Role is required"); }
-    if (empty($password)) { array_push($errors, "Password is required"); }
-    if ($password != $passwordConf) {
-      array_push($errors, "The two passwords do not match");
-    }
-
-    $user_check_query = "SELECT * FROM users WHERE username='$username' OR email='$email' LIMIT 1";
-    $result = mysqli_query($conn, $user_check_query);
-    $user = mysqli_fetch_assoc($result);
-  
-    if ($user) { // if user exists
-        if ($user['username'] === $username) {
-        array_push($errors, "Username already exists");
-        }
-    }
-
-    if (count($errors) == 0) {
-        $password = md5($password);//encrypt the password before saving in the database
-  
-        $query = "INSERT INTO users(firstname, lastname, username,role,email,password)";
-        $query .= " VALUES('$firstname','$lastname','$username','$role','$email','$password')";
-        $insert_result = mysqli_query($conn,$query);
-
-        $user_id = $conn->insert_id;
-
-        if(!$insert_result) {
-            die("Failed to Register user ".mysqli_error($conn));
-        } else {
-            $_SESSION['role'] = $role;
-            $_SESSION['id'] = $user_id;
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = $role;
-            $_SESSION['reg-success'] = "Welcome To The Library ";
-            header("Location: users.php");
-            exit(0);
-        }
-    }
-}
-
-
 ?>
+<?php $errors = array();?>
+<?php include "includes/authentications.php"; ?>
+
+
+
+
 
 
 <!DOCTYPE html>
@@ -124,20 +72,20 @@ if(isset($_POST['submit-reg'])) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.php">Home Site</a>
+                <a class="navbar-brand" href="index.php">Home Site</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+            <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['username']; ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="admin-registration/logout.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -188,10 +136,10 @@ if(isset($_POST['submit-reg'])) {
 
                 <!-- Page Heading -->
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" id="user-table">
                         <h1 class="page-header">
                             Welcome To Admin
-                            <small>Subheading</small>
+                            <small><?php echo $_SESSION['username']; ?></small>
                         </h1>
 
                         <div class="col-xs-12" id="container">
