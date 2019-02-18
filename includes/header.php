@@ -54,7 +54,7 @@
                     </li>
                     </ul>
                         <li class="nav-item register">
-                            <a href="mylibrary-management-system.herokuapp.com/register.php">Sign Up  <i class="fa fa-sign-in"></i></a>
+                            <a href="mylibrary-management-system/register.php">Sign Up  <i class="fa fa-sign-in"></i></a>
                         </li>
                         </ul>
                         <?php endif; ?>
